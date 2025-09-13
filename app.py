@@ -29,8 +29,6 @@ def generate_qr(data, filename=None):
     return img
 
 
-# -------------------- Flask Routes --------------------
-
 @app.route("/")
 def home():
     return jsonify({"message": "QR Code Generator API is running!"})
@@ -63,22 +61,9 @@ def generate_qr_api():
         return jsonify({"error": str(e)}), 500
 
 
-# -------------------- CLI Entry --------------------
+# -------------------- Entry Point --------------------
 
 if __name__ == "__main__":
-    import sys
-
-    if len(sys.argv) > 1 and sys.argv[1] == "api":
-        # Run as API server
-        app.run(debug=True, host="0.0.0.0", port=5000)
-    else:
-        # Run as CLI program
-        user_input = input("Enter link or text for QR Code: ").strip()
-        filename = input("Enter filename to save (default: qrcode.png): ").strip()
-
-        if not filename:
-            filename = "qrcode.png"
-        elif not filename.lower().endswith(".png"):
-            filename += ".png"
-
-        generate_qr(user_input, filename)
+    import os
+    port = int(os.environ.get("PORT", 5000))  # use PORT env (for Heroku/Cloud Run)
+    app.run(host="0.0.0.0", port=port)
